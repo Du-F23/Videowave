@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Http\Controllers\Api;
+
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +17,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->prefix('auth')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::get('anyusers', function (){
+        $users = User::all();
+
+        return response()->json([
+            'users' => $users
+        ], 200);
+    });
+
+    Route::apiResource('videos', VideoController::class);
 });
+
+Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/register', [AuthController::class, 'register']);
